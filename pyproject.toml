@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "app"
 version = "0.1.0"
-description = "FastAPI starter template with authentication and migrations"
+description = "FastAPI starter template using SQLModel. Includes JWT authentication and basic alembic configuration for migrations."
 authors = ["Demetrius Panovitch <demetrius.mp789@gmail.com>"]
 
 [tool.poetry.dependencies]
