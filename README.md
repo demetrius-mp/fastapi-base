@@ -5,7 +5,7 @@ FastAPI starter template using SQLModel. Includes JWT authentication and basic a
 ## Explaining the architecture
 
 ```
-app
+src
 ├── core
 │   ├── dependencies.py
 │   └── security.py
@@ -22,6 +22,6 @@ app
 └── settings.py
 ```
 
-`app/core/dependencies.py`: dependency injection code (database session, current user) should be here.
+`src/core/dependencies.py`: dependency injection code (database session, current user) should be here.
 
-`app/core/security.py`: authentication code (hashing passwords, creating JWT's, adding a user to the database) should be here.
+`src/core/security.py`: authentication code (hashing passwords, creating JWT's, adding a user to the database) should be here.

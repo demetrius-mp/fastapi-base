@@ -9,9 +9,8 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from sqlmodel import Session, select
 
-from app.models import User
-from app.models.user import CreateUser
-from app.settings import settings
+from src.models.user import CreateUser, User
+from src.settings import settings
 
 # exported
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/sign-in")
