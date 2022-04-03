@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "src"
 version = "0.1.0"
-description = "FastAPI starter template using SQLModel. Includes JWT authentication and basic alembic configuration for migrations."
+description = "FastAPI starter template using SQLModel as the ORM. Includes JWT authentication and basic alembic configuration for migrations. Built with Poetry."
 authors = ["Demetrius Panovitch <demetrius.mp789@gmail.com>"]
 
 [tool.poetry.dependencies]
