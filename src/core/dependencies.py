@@ -3,14 +3,17 @@ from sqlmodel import Session
 
 from src.core.security import decode_jwt, get_user, oauth2_scheme
 from src.database import engine
-from src.routers.http_exceptions import credentials_exception
+
+from .http_exceptions import credentials_exception
 
 
+# exported
 def get_db():
     with Session(engine) as session:
         yield session
 
 
+# exported
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
 ):

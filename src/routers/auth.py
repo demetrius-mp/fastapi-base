@@ -4,8 +4,8 @@ from sqlmodel import Session
 
 from src.core import security
 from src.core.dependencies import get_current_user, get_db
+from src.core.http_exceptions import credentials_exception
 from src.models.user import CreateUser, CurrentUser
-from src.routers.http_exceptions import credentials_exception
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
