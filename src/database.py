@@ -1,7 +1,7 @@
 from sqlmodel import create_engine
 from sqlmodel.sql.expression import Select, SelectOfScalar
 
-from app.settings import settings
+from src.settings import settings
 
 SQLALCHEMY_DATABASE_URL = settings.sqlalchemy_database_url
 

@@ -7,7 +7,7 @@ load_dotenv()
 def dev():
     from uvicorn import run
 
-    run("app:app", reload=True, reload_dirs="app")
+    run("src.asgi:app", reload=True, reload_dirs="src")
 
 
 @click.group()

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "app"
+name = "src"
 version = "0.1.0"
 description = "FastAPI starter template using SQLModel. Includes JWT authentication and basic alembic configuration for migrations."
 authors = ["Demetrius Panovitch <demetrius.mp789@gmail.com>"]
@@ -26,8 +26,8 @@ flake8 = "^4.0.1"
 profile = "black"
 
 [tool.poetry.scripts]
-db = "app.scripts:db"
-dev = "app.scripts:dev"
+db = "src.scripts:db"
+dev = "src.scripts:dev"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
