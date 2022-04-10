@@ -3,7 +3,8 @@ from __future__ import annotations
 from sqlmodel import Session, select
 
 from src.core.security import check_password_hash, generate_password_hash
-from src.models.user import CreateUser, User
+from src.models import User
+from src.schemas.user import CreateUser
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
