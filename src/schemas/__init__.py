@@ -1,2 +1,3 @@
 # import your input/output schemas here
-from .user import CreateUser, CurrentUser
+from .invoice import CreateInvoice, ReadInvoice
+from .user import CreateUser, CurrentUser, UpdateUser
