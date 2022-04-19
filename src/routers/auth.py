@@ -88,7 +88,7 @@ async def update_profile(
     user.email = updated_user_data.email
 
     if updated_user_data.new_password is not None:
-        user.password = updated_user_data.new_password
+        user.password = security.generate_password_hash(updated_user_data.new_password)
 
     db.add(user)
     db.commit()
