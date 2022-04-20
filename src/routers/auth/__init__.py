@@ -5,8 +5,9 @@ from sqlmodel import Session
 from src.core import security
 from src.core.dependencies import get_current_user, get_db
 from src.core.http_exceptions import credentials_exception
-from src.repository.user import check_user_credentials, create_user, get_user_by_email
 from src.schemas.user import CreateUser, CurrentUser, UpdateUser
+
+from .utils import check_user_credentials, create_user, get_user_by_email
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -27,7 +28,7 @@ async def sign_up(
             detail="This email is already being used.",
         )
 
-    created_user = create_user(db, user_data=user)
+    created_user = create_user(user_data=user)
 
     db.add(created_user)
     db.commit()

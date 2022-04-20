@@ -17,7 +17,7 @@ def get_user_by_email(db: Session, email: str) -> User | None:
     return db.exec(stmt).first()
 
 
-def create_user(db: Session, user_data: CreateUser) -> User:
+def create_user(user_data: CreateUser) -> User:
     """
     Creates a user and returns it.
     """
