@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from sqlmodel import Session
+from prisma import Client
+from prisma.models import User
 
 from src.core import security
 from src.core.dependencies import get_current_user, get_db
 from src.core.http_exceptions import credentials_exception
 from src.schemas.user import CreateUser, CurrentUser, UpdateUser
-
-from .utils import check_user_credentials, create_user, get_user_by_email
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -18,9 +17,13 @@ auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 )
 async def sign_up(
     user: CreateUser,
-    db: Session = Depends(get_db),
+    db: Client = Depends(get_db),
 ):
-    existing_user = get_user_by_email(db, user.email)
+    existing_user = await db.user.find_unique(
+        {
+            "email": user.email,
+        }
+    )
 
     if existing_user is not None:
         raise HTTPException(
@@ -28,11 +31,14 @@ async def sign_up(
             detail="This email is already being used.",
         )
 
-    created_user = create_user(user_data=user)
-
-    db.add(created_user)
-    db.commit()
-    db.refresh(created_user)
+    hashed_password = security.generate_password_hash(user.password)
+    created_user = await db.user.create(
+        {
+            "email": user.email,
+            "name": user.name,
+            "password": hashed_password,
+        }
+    )
 
     return created_user
 
@@ -42,11 +48,17 @@ async def sign_up(
     response_model=security.Token,
 )
 async def sign_in(
-    db: Session = Depends(get_db),
+    db: Client = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    user = check_user_credentials(db, form_data.username, form_data.password)
-    if user is None:
+    user = await db.user.find_unique(
+        {
+            "email": form_data.username,
+        }
+    )
+    if user is None or not security.check_password_hash(
+        form_data.password, user.password
+    ):
         raise credentials_exception
 
     access_token = security.create_access_token(email=user.email)
@@ -61,9 +73,9 @@ async def sign_in(
 async def update_profile(
     updated_user_data: UpdateUser,
     current_user: CurrentUser = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    db: Client = Depends(get_db),
 ):
-    user = get_user_by_email(db, current_user.email)
+    user = await db.user.find_unique({"email": current_user.email})
 
     if user is None:
         raise HTTPException(
@@ -77,7 +89,11 @@ async def update_profile(
             detail="Password is incorrect.",
         )
 
-    existing_user = get_user_by_email(db, updated_user_data.email)
+    existing_user = await db.user.find_unique(
+        {
+            "email": updated_user_data.email,
+        }
+    )
 
     if current_user.email != updated_user_data.email and existing_user is not None:
         raise HTTPException(
@@ -91,11 +107,18 @@ async def update_profile(
     if updated_user_data.new_password is not None:
         user.password = security.generate_password_hash(updated_user_data.new_password)
 
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    updated_user = await db.user.update(
+        data={
+            "name": user.name,
+            "email": user.email,
+            "password": user.password,
+        },
+        where={
+            "email": user.email,
+        },
+    )
 
-    return user
+    return updated_user
 
 
 @auth_router.get(

@@ -1,10 +1,9 @@
 from typing import Optional
 
-from pydantic import EmailStr
-from sqlmodel import SQLModel
+from pydantic import BaseModel, EmailStr
 
 
-class BaseUser(SQLModel):
+class BaseUser(BaseModel):
     name: str
     email: EmailStr
 
@@ -19,4 +18,4 @@ class UpdateUser(BaseUser):
 
 
 class CurrentUser(BaseUser):
-    id: int
+    id: str
