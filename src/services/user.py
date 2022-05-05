@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from sqlmodel import Session, select
 
-from src.core.security import check_password_hash, generate_password_hash
 from src.models import User
 from src.schemas.user import CreateUser
+from src.services.auth import check_password_hash, generate_password_hash
 
 
 def get_user_by_email(db: Session, email: str) -> User | None:
@@ -28,7 +28,9 @@ def create_user(user_data: CreateUser) -> User:
     return created_user
 
 
-def check_user_credentials(db: Session, email: str, password: str) -> User | None:
+def get_user_by_email_and_password(
+    db: Session, email: str, password: str
+) -> User | None:
     """
     Checks if the given email and password are valid, and returns the user.
     Returns None if the email or password is wrong.

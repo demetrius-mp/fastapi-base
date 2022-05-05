@@ -1,17 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Optional
 
-from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
 
+from src.schemas import TokenData
 from src.settings import settings
-
-# exported
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/sign-in")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -19,15 +14,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    email: Optional[str] = None
 
 
 def check_password_hash(plain_password: str, hashed_password: str) -> bool:

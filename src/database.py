@@ -3,7 +3,7 @@ from sqlmodel.sql.expression import Select, SelectOfScalar
 
 from src.settings import settings
 
-SQLALCHEMY_DATABASE_URL = settings.sqlalchemy_database_url
+SQLALCHEMY_DATABASE_URL = settings.database_url
 
 
 def engine_factory(database_url: str):

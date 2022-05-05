@@ -2,12 +2,20 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlmodel import Session
 
-from src.core import security
 from src.core.dependencies import get_current_user, get_db
 from src.core.http_exceptions import credentials_exception
+from src.schemas import Token
 from src.schemas.user import CreateUser, CurrentUser, UpdateUser
-
-from .utils import check_user_credentials, create_user, get_user_by_email
+from src.services.auth import (
+    check_password_hash,
+    create_access_token,
+    generate_password_hash,
+)
+from src.services.user import (
+    create_user,
+    get_user_by_email,
+    get_user_by_email_and_password,
+)
 
 auth_router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -39,17 +47,17 @@ async def sign_up(
 
 @auth_router.post(
     "/sign-in",
-    response_model=security.Token,
+    response_model=Token,
 )
 async def sign_in(
     db: Session = Depends(get_db),
     form_data: OAuth2PasswordRequestForm = Depends(),
 ):
-    user = check_user_credentials(db, form_data.username, form_data.password)
+    user = get_user_by_email_and_password(db, form_data.username, form_data.password)
     if user is None:
         raise credentials_exception
 
-    access_token = security.create_access_token(email=user.email)
+    access_token = create_access_token(email=user.email)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -71,7 +79,7 @@ async def update_profile(
             detail="Something went wrong, please try again.",
         )
 
-    if not security.check_password_hash(updated_user_data.old_password, user.password):
+    if not check_password_hash(updated_user_data.old_password, user.password):
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             detail="Password is incorrect.",
@@ -89,7 +97,7 @@ async def update_profile(
     user.email = updated_user_data.email
 
     if updated_user_data.new_password is not None:
-        user.password = security.generate_password_hash(updated_user_data.new_password)
+        user.password = generate_password_hash(updated_user_data.new_password)
 
     db.add(user)
     db.commit()
